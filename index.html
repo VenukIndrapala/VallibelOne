@@ -13,8 +13,11 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 
-    <!-- Babel Standalone: transforms JSX in the browser on page load -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
+    <!-- Babel Standalone: transforms JSX in the browser on page load.
+         Pinned to the 7.x line — newer versions default to the "automatic"
+         JSX runtime, which injects an `import` statement that fails outside
+         a module bundler and silently renders a blank page. -->
+    <script src="https://unpkg.com/@babel/standalone@7/babel.min.js" crossorigin></script>
   </head>
   <body>
     <div id="root"></div>
