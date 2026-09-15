@@ -147,7 +147,7 @@ function OverviewTab() {
 
 // Paste your deployed Google Apps Script Web App URL here.
 // Extensions > Apps Script > Deploy > New deployment > Web app > copy the URL.
-const SCRIPT_URL = https://script.google.com/macros/s/AKfycbyr_0EphryVGD4301LFCVGtjvbtk2pk730tHsTzBywr9xc87YV9l-6hX_0io4g1CztI8g/exec;
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyr_0EphryVGD4301LFCVGtjvbtk2pk730tHsTzBywr9xc87YV9l-6hX_0io4g1CztI8g/exec";
 
 function RegisterTab() {
   const [form, setForm] = useState(emptyForm);
