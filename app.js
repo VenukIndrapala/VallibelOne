@@ -145,9 +145,14 @@ function OverviewTab() {
   );
 }
 
+// Paste your deployed Google Apps Script Web App URL here.
+// Extensions > Apps Script > Deploy > New deployment > Web app > copy the URL.
+const SCRIPT_URL = https://script.google.com/macros/s/AKfycbyr_0EphryVGD4301LFCVGtjvbtk2pk730tHsTzBywr9xc87YV9l-6hX_0io4g1CztI8g/exec;
+
 function RegisterTab() {
   const [form, setForm] = useState(emptyForm);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
   const isUni = form.category === "university";
@@ -157,7 +162,7 @@ function RegisterTab() {
     setForm((f) => ({ ...f, [field]: value }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (!form.category || !form.fullName || !form.nic || !form.email || !form.phone || !form.institution) {
       setError("Please complete all required fields before submitting.");
@@ -167,8 +172,29 @@ function RegisterTab() {
       setError("Participation consent is required to register.");
       return;
     }
+
     setError("");
-    setSubmitted(true);
+    setSubmitting(true);
+
+    try {
+      const body = new FormData();
+      Object.keys(form).forEach((key) => body.append(key, form[key]));
+
+      // mode: "no-cors" is required because Apps Script Web Apps don't send
+      // CORS headers. This means we can't read the response back (it's
+      // "opaque"), so we treat a fetch that doesn't throw as a success.
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body,
+      });
+
+      setSubmitting(false);
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitting(false);
+      setError("Couldn't reach the registration server. Check your connection and try again.");
+    }
   }
 
   if (submitted) {
@@ -178,9 +204,8 @@ function RegisterTab() {
           <span className="confirm-mark">✓</span>
           <h3>Registration recorded</h3>
           <p>
-            Thanks, {form.fullName.split(" ")[0]}. This is a prototype — no data has been sent
-            anywhere. In production this would submit to your registration backend and trigger
-            a confirmation email with visit assignment and date.
+            Thanks, {form.fullName.split(" ")[0]}. Your details have been submitted. You'll be
+            contacted with your confirmed visit date and assignment closer to the programme.
           </p>
           <button className="btn-ghost" onClick={() => { setForm(emptyForm); setSubmitted(false); }}>
             Register another participant
@@ -307,7 +332,9 @@ function RegisterTab() {
 
         {error && <p className="error-text">{error}</p>}
 
-        <button type="submit" className="btn-primary">Submit registration</button>
+        <button type="submit" className="btn-primary" disabled={submitting}>
+          {submitting ? "Submitting…" : "Submit registration"}
+        </button>
       </form>
     </div>
   );
