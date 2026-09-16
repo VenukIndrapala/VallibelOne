@@ -152,23 +152,6 @@ function OverviewTab() {
 // Extensions > Apps Script > Deploy > New deployment > Web app > copy the URL.
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyr_0EphryVGD4301LFCVGtjvbtk2pk730tHsTzBywr9xc87YV9l-6hX_0io4g1CztI8g/exec";
 
-function PottedPlant() {
-  return (
-    <svg className="reg-plant" viewBox="0 0 120 130" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="60" cy="118" rx="34" ry="6" fill="#DAD5C8" opacity="0.6" />
-      <path d="M32 84 L88 84 L80 118 L40 118 Z" fill="#B5502E" />
-      <path d="M32 84 L88 84 L85 93 L35 93 Z" fill="#8A4022" />
-      <g fill="#5C7A5E">
-        <path d="M60 86 C60 60 44 46 30 40 C34 60 44 78 60 86 Z" />
-        <path d="M60 86 C60 55 76 40 92 34 C90 58 78 78 60 86 Z" />
-        <path d="M60 86 C56 54 62 32 60 14 C68 32 70 58 60 86 Z" />
-        <path d="M60 86 C48 66 46 44 52 24 C60 42 62 66 60 86 Z" opacity="0.85" />
-        <path d="M60 86 C72 66 74 44 68 24 C60 42 58 66 60 86 Z" opacity="0.85" />
-      </g>
-    </svg>
-  );
-}
-
 function RegisterTab() {
   const [form, setForm] = useState(emptyForm);
   const [submitted, setSubmitted] = useState(false);
@@ -243,8 +226,6 @@ function RegisterTab() {
   return (
     <div className="panel">
       <div className="reg-sheet">
-        <PottedPlant />
-
         <div className="reg-header-row">
           <div className="reg-banner">
             <h2>REGISTRATION <span>FORM</span></h2>
@@ -790,7 +771,7 @@ function App() {
 
         /* --- Registration sheet (document-style form) --- */
         @keyframes regSlideInUp {
-          from { transform: translateY(48px); opacity: 0; }
+          from { transform: translateY(90px); opacity: 0; }
           to { transform: translateY(0); opacity: 1; }
         }
         .reg-sheet {
@@ -798,15 +779,8 @@ function App() {
           background: #FFFFFF;
           border: 1px solid #DAD5C8;
           padding: 36px 40px 40px;
-          animation: regSlideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .reg-plant {
-          position: absolute;
-          top: 14px;
-          left: 14px;
-          width: 64px;
-          height: auto;
-          opacity: 0.9;
+          box-shadow: 10px 0 24px -6px rgba(43, 43, 40, 0.28);
+          animation: regSlideInUp 1.1s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .reg-header-row {
           display: flex;
@@ -814,7 +788,6 @@ function App() {
           justify-content: space-between;
           gap: 16px;
           margin-bottom: 22px;
-          padding-left: 70px;
           flex-wrap: wrap;
         }
         .reg-banner {
