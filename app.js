@@ -117,8 +117,53 @@ function PillNav({ active, setActive }) {
     }
   }, [active]);
 
+  // Dock-style magnify: as the pointer moves across the bar, each button
+  // scales up based on how close it is to the pointer (closer = bigger),
+  // matching a macOS-dock magnification curve. Applied via direct style
+  // mutation (not React state) since mousemove fires too often to re-render on.
+  function handlePointerMove(e) {
+    const container = containerRef.current;
+    if (!container) return;
+    const cRect = container.getBoundingClientRect();
+    const pointerX = e.clientX - cRect.left;
+    const MAX_SCALE = 1.22;
+    const RADIUS = 90;
+    TABS.forEach((t) => {
+      const btn = btnRefs.current[t.id];
+      if (!btn) return;
+      const bRect = btn.getBoundingClientRect();
+      const center = bRect.left - cRect.left + bRect.width / 2;
+      const falloff = Math.max(0, 1 - Math.abs(pointerX - center) / RADIUS);
+      const scale = 1 + (MAX_SCALE - 1) * falloff;
+      btn.style.transform = `scale(${scale.toFixed(3)})`;
+    });
+  }
+
+  function handlePointerLeave() {
+    TABS.forEach((t) => {
+      const btn = btnRefs.current[t.id];
+      if (btn) btn.style.transform = "";
+    });
+  }
+
+  // Click feedback: a quick pop, for touch devices where there's no hover magnify.
+  function handleSelect(id) {
+    setActive(id);
+    const btn = btnRefs.current[id];
+    if (btn) {
+      btn.classList.remove("pop");
+      void btn.offsetWidth; // force reflow so the animation restarts on repeat clicks
+      btn.classList.add("pop");
+    }
+  }
+
   return (
-    <div className="pill-nav" ref={containerRef}>
+    <div
+      className="pill-nav"
+      ref={containerRef}
+      onMouseMove={handlePointerMove}
+      onMouseLeave={handlePointerLeave}
+    >
       {indicator && (
         <span
           className="pill-glow"
@@ -130,7 +175,7 @@ function PillNav({ active, setActive }) {
           key={t.id}
           ref={(el) => (btnRefs.current[t.id] = el)}
           className={`pill-link ${active === t.id ? "active" : ""}`}
-          onClick={() => setActive(t.id)}
+          onClick={() => handleSelect(t.id)}
         >
           {t.label}
         </button>
@@ -716,10 +761,22 @@ function App() {
           padding: 8px 16px;
           border-radius: 999px;
           cursor: pointer;
-          transition: color 0.15s ease;
+          transform-origin: center bottom;
+          transition: color 0.15s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+          will-change: transform;
         }
         .pill-link:hover { color: #F5EEE4; }
-        .pill-link.active { color: #F5EEE4; }
+        .pill-link.active { color: #F5EEE4; font-weight: 700; }
+        @keyframes pillPop {
+          0% { transform: scale(1); }
+          45% { transform: scale(1.28); }
+          100% { transform: scale(1); }
+        }
+        .pill-link.pop { animation: pillPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @media (prefers-reduced-motion: reduce) {
+          .pill-link { transition: color 0.15s ease; }
+          .pill-link.pop { animation: none; }
+        }
         .btn-black {
           background: #0E0B09;
           color: #F5EEE4;
