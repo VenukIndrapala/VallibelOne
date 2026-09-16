@@ -2,6 +2,9 @@ const { useState } = React;
 
 const FONT_IMPORT = `@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Inter:wght@400;500;600&display=swap');`;
 
+const LOGO_DATA_URI = "data:image/png;base64,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";
+
+
 const BUSINESS_UNITS = [
   "Swisstek Ceylon PLC",
   "Swisstek Aluminium Limited",
@@ -149,11 +152,33 @@ function OverviewTab() {
 // Extensions > Apps Script > Deploy > New deployment > Web app > copy the URL.
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyr_0EphryVGD4301LFCVGtjvbtk2pk730tHsTzBywr9xc87YV9l-6hX_0io4g1CztI8g/exec";
 
+function PottedPlant() {
+  return (
+    <svg className="reg-plant" viewBox="0 0 120 130" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="60" cy="118" rx="34" ry="6" fill="#DAD5C8" opacity="0.6" />
+      <path d="M32 84 L88 84 L80 118 L40 118 Z" fill="#B5502E" />
+      <path d="M32 84 L88 84 L85 93 L35 93 Z" fill="#8A4022" />
+      <g fill="#5C7A5E">
+        <path d="M60 86 C60 60 44 46 30 40 C34 60 44 78 60 86 Z" />
+        <path d="M60 86 C60 55 76 40 92 34 C90 58 78 78 60 86 Z" />
+        <path d="M60 86 C56 54 62 32 60 14 C68 32 70 58 60 86 Z" />
+        <path d="M60 86 C48 66 46 44 52 24 C60 42 62 66 60 86 Z" opacity="0.85" />
+        <path d="M60 86 C72 66 74 44 68 24 C60 42 58 66 60 86 Z" opacity="0.85" />
+      </g>
+    </svg>
+  );
+}
+
 function RegisterTab() {
   const [form, setForm] = useState(emptyForm);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  const [today] = useState(() =>
+    new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+  );
+  const [refNo] = useState(() => `REG-${Date.now().toString().slice(-6)}`);
 
   const isUni = form.category === "university";
   const isSchool = form.category === "school";
@@ -217,125 +242,140 @@ function RegisterTab() {
 
   return (
     <div className="panel">
-      <h2>Register to participate</h2>
-      <p className="lede">Fields marked * are required. Registration is individual — no institution nomination needed.</p>
+      <div className="reg-sheet">
+        <PottedPlant />
 
-      <form onSubmit={handleSubmit} className="form">
-        <fieldset className="field-group">
-          <legend>Category *</legend>
-          <div className="radio-row">
-            <label className={`radio-card ${isSchool ? "active" : ""}`}>
+        <div className="reg-header-row">
+          <div className="reg-banner">
+            <h2>REGISTRATION <span>FORM</span></h2>
+          </div>
+          <img src={LOGO_DATA_URI} alt="Vallibel One" className="reg-logo" />
+        </div>
+
+        <div className="reg-meta-row">
+          <div className="reg-meta">
+            <span className="reg-meta-label">Date</span>
+            <span className="reg-meta-value">{today}</span>
+          </div>
+          <div className="reg-meta">
+            <span className="reg-meta-label">Reference No.</span>
+            <span className="reg-meta-value">{refNo}</span>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="reg-section-title">Category</div>
+          <div className="reg-check-row">
+            <label className="reg-check">
               <input
-                type="radio"
-                name="category"
+                type="checkbox"
                 checked={isSchool}
-                onChange={() => update("category", "school")}
+                onChange={() => update("category", isSchool ? "" : "school")}
               />
-              School leaver (A/L Math or Commerce)
+              School leaver <span className="reg-check-sub">(A/L Math or Commerce)</span>
             </label>
-            <label className={`radio-card ${isUni ? "active" : ""}`}>
+            <label className="reg-check">
               <input
-                type="radio"
-                name="category"
+                type="checkbox"
                 checked={isUni}
-                onChange={() => update("category", "university")}
+                onChange={() => update("category", isUni ? "" : "university")}
               />
               University student
             </label>
           </div>
-        </fieldset>
 
-        <div className="grid-2">
-          <label className="field">
-            Full name *
-            <input value={form.fullName} onChange={(e) => update("fullName", e.target.value)} placeholder="As per NIC" />
-          </label>
-          <label className="field">
-            NIC / ID number *
-            <input value={form.nic} onChange={(e) => update("nic", e.target.value)} placeholder="200012345678" />
-          </label>
-        </div>
+          <div className="reg-section-title">Personal Information</div>
+          <div className="reg-grid">
+            <div className="reg-field">
+              <label>Full Name *</label>
+              <input value={form.fullName} onChange={(e) => update("fullName", e.target.value)} placeholder="As per NIC" />
+            </div>
+            <div className="reg-field">
+              <label>NIC / ID Number *</label>
+              <input value={form.nic} onChange={(e) => update("nic", e.target.value)} placeholder="200012345678" />
+            </div>
+            <div className="reg-field">
+              <label>Email *</label>
+              <input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="you@example.com" />
+            </div>
+            <div className="reg-field">
+              <label>Phone *</label>
+              <input value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="07X XXX XXXX" />
+            </div>
 
-        <div className="grid-2">
-          <label className="field">
-            Email *
-            <input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="you@example.com" />
-          </label>
-          <label className="field">
-            Phone *
-            <input value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="07X XXX XXXX" />
-          </label>
-        </div>
+            {isUni && (
+              <>
+                <div className="reg-field">
+                  <label>University *</label>
+                  <select value={form.institution} onChange={(e) => update("institution", e.target.value)}>
+                    <option value="">Select university</option>
+                    {UNIVERSITIES.map((u) => (
+                      <option key={u} value={u}>{u}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="reg-field">
+                  <label>Degree Programme &amp; Year</label>
+                  <input value={form.detail} onChange={(e) => update("detail", e.target.value)} placeholder="e.g. BSc Logistics, Year 3" />
+                </div>
+              </>
+            )}
 
-        {isUni && (
-          <div className="grid-2">
-            <label className="field">
-              University *
-              <select value={form.institution} onChange={(e) => update("institution", e.target.value)}>
-                <option value="">Select university</option>
-                {UNIVERSITIES.map((u) => (
-                  <option key={u} value={u}>{u}</option>
-                ))}
-              </select>
-            </label>
-            <label className="field">
-              Degree programme &amp; year
-              <input value={form.detail} onChange={(e) => update("detail", e.target.value)} placeholder="e.g. BSc Logistics, Year 3" />
-            </label>
+            {isSchool && (
+              <>
+                <div className="reg-field">
+                  <label>School Name *</label>
+                  <input value={form.institution} onChange={(e) => update("institution", e.target.value)} placeholder="School name" />
+                </div>
+                <div className="reg-field">
+                  <label>A/L Stream</label>
+                  <select value={form.detail} onChange={(e) => update("detail", e.target.value)}>
+                    <option value="">Select stream</option>
+                    <option value="maths">Mathematics</option>
+                    <option value="commerce">Commerce</option>
+                  </select>
+                </div>
+              </>
+            )}
           </div>
-        )}
 
-        {isSchool && (
-          <div className="grid-2">
-            <label className="field">
-              School name *
-              <input value={form.institution} onChange={(e) => update("institution", e.target.value)} placeholder="School name" />
-            </label>
-            <label className="field">
-              A/L stream
-              <select value={form.detail} onChange={(e) => update("detail", e.target.value)}>
-                <option value="">Select stream</option>
-                <option value="maths">Mathematics</option>
-                <option value="commerce">Commerce</option>
-              </select>
-            </label>
+          <div className="reg-section-title">Emergency Contact</div>
+          <div className="reg-grid">
+            <div className="reg-field">
+              <label>Contact Name</label>
+              <input value={form.emergencyName} onChange={(e) => update("emergencyName", e.target.value)} />
+            </div>
+            <div className="reg-field">
+              <label>Contact Phone</label>
+              <input value={form.emergencyPhone} onChange={(e) => update("emergencyPhone", e.target.value)} />
+            </div>
           </div>
-        )}
 
-        <div className="grid-2">
-          <label className="field">
-            Emergency contact name
-            <input value={form.emergencyName} onChange={(e) => update("emergencyName", e.target.value)} />
-          </label>
-          <label className="field">
-            Emergency contact phone
-            <input value={form.emergencyPhone} onChange={(e) => update("emergencyPhone", e.target.value)} />
-          </label>
-        </div>
-
-        <div className="field-group consent-group">
-          <label className="checkbox-row">
-            <input type="checkbox" checked={form.consentParticipation} onChange={(e) => update("consentParticipation", e.target.checked)} />
-            I consent to participate and agree to follow site safety and conduct guidelines. *
-          </label>
-          <label className="checkbox-row">
-            <input type="checkbox" checked={form.consentPhoto} onChange={(e) => update("consentPhoto", e.target.checked)} />
-            I consent to being photographed for programme documentation. <Tag>Wording pending legal confirmation</Tag>
-          </label>
-          {isSchool && (
-            <label className="checkbox-row">
-              <input type="checkbox" checked={form.guardianConsent} onChange={(e) => update("guardianConsent", e.target.checked)} />
-              I confirm parental/guardian consent has been obtained (required if under 18). <Tag>Pending confirmation</Tag>
+          <div className="reg-section-title">Consent</div>
+          <div className="reg-consent">
+            <label className="reg-check">
+              <input type="checkbox" checked={form.consentParticipation} onChange={(e) => update("consentParticipation", e.target.checked)} />
+              I consent to participate and agree to follow site safety and conduct guidelines. *
             </label>
-          )}
-        </div>
+            <label className="reg-check">
+              <input type="checkbox" checked={form.consentPhoto} onChange={(e) => update("consentPhoto", e.target.checked)} />
+              I consent to being photographed for programme documentation. <Tag>Wording pending legal confirmation</Tag>
+            </label>
+            {isSchool && (
+              <label className="reg-check">
+                <input type="checkbox" checked={form.guardianConsent} onChange={(e) => update("guardianConsent", e.target.checked)} />
+                I confirm parental/guardian consent has been obtained (required if under 18). <Tag>Pending confirmation</Tag>
+              </label>
+            )}
+          </div>
 
-        {error && <p className="error-text">{error}</p>}
+          {error && <p className="error-text">{error}</p>}
 
-        <button type="submit" className="btn-primary" disabled={submitting}>
-          {submitting ? "Submitting…" : "Submit registration"}
-        </button>
-      </form>
+          <button type="submit" className="btn-primary" disabled={submitting}>
+            {submitting ? "Submitting…" : "Submit registration"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
@@ -747,6 +787,117 @@ function App() {
         }
         .faq-icon { color: #B5502E; font-size: 18px; font-weight: 700; }
         .faq-a { font-size: 14px; color: #423F38; line-height: 1.6; padding: 0 4px 18px; margin: 0; }
+
+        /* --- Registration sheet (document-style form) --- */
+        @keyframes regSlideInUp {
+          from { transform: translateY(48px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        .reg-sheet {
+          position: relative;
+          background: #FFFFFF;
+          border: 1px solid #DAD5C8;
+          padding: 36px 40px 40px;
+          animation: regSlideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reg-plant {
+          position: absolute;
+          top: 14px;
+          left: 14px;
+          width: 64px;
+          height: auto;
+          opacity: 0.9;
+        }
+        .reg-header-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          margin-bottom: 22px;
+          padding-left: 70px;
+          flex-wrap: wrap;
+        }
+        .reg-banner {
+          background: #F0B93A;
+          padding: 10px 22px;
+          flex: 1;
+          min-width: 220px;
+        }
+        .reg-banner h2 {
+          margin: 0;
+          font-size: 20px;
+          letter-spacing: 0.04em;
+          color: #2B2B28;
+        }
+        .reg-banner h2 span { font-weight: 500; }
+        .reg-logo { height: 26px; width: auto; }
+
+        .reg-meta-row {
+          display: flex;
+          gap: 40px;
+          border-bottom: 2px solid #2B2B28;
+          padding-bottom: 16px;
+          margin-bottom: 24px;
+          flex-wrap: wrap;
+        }
+        .reg-meta { display: flex; flex-direction: column; gap: 4px; }
+        .reg-meta-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #8A8577; }
+        .reg-meta-value { font-size: 14px; font-weight: 600; color: #2B2B28; }
+
+        .reg-section-title {
+          background: #F0B93A;
+          color: #2B2B28;
+          font-weight: 700;
+          font-size: 13px;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+          padding: 7px 14px;
+          margin: 28px 0 18px;
+        }
+        .reg-sheet form > .reg-section-title:first-of-type { margin-top: 0; }
+
+        .reg-check-row { display: flex; gap: 28px; flex-wrap: wrap; }
+        .reg-check {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+          font-weight: 600;
+          color: #2B2B28;
+          cursor: pointer;
+        }
+        .reg-check input { width: 16px; height: 16px; accent-color: #B5502E; cursor: pointer; }
+        .reg-check-sub { font-weight: 400; color: #5C5A50; }
+
+        .reg-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px 40px;
+        }
+        @media (max-width: 640px) { .reg-grid { grid-template-columns: 1fr; } }
+
+        .reg-field { display: flex; flex-direction: column; gap: 6px; }
+        .reg-field label { font-size: 12px; font-weight: 700; color: #5C5A50; text-transform: uppercase; letter-spacing: 0.02em; }
+        .reg-field input, .reg-field select {
+          border: none;
+          border-bottom: 1.5px dotted #B3AC9C;
+          background: transparent;
+          font-family: 'Inter', sans-serif;
+          font-size: 15px;
+          color: #2B2B28;
+          padding: 4px 2px 8px;
+        }
+        .reg-field input:focus, .reg-field select:focus {
+          outline: none;
+          border-bottom: 1.5px solid #B5502E;
+        }
+        .reg-field input::placeholder { color: #B3AC9C; }
+
+        .reg-consent { display: flex; flex-direction: column; gap: 14px; }
+        .reg-consent .reg-check { font-weight: 400; align-items: flex-start; }
+        .reg-consent .reg-check input { margin-top: 3px; flex-shrink: 0; }
+
+        .reg-sheet .btn-primary { margin-top: 32px; }
       `}</style>
 
       <div className="topbar">
