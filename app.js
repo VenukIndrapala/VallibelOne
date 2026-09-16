@@ -1,4 +1,4 @@
-const { useState } = React;
+const { useState, useRef, useEffect } = React;
 
 const FONT_IMPORT = `@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');`;
 
@@ -90,6 +90,55 @@ function Tag({ children }) {
   return <span className="tag">{children}</span>;
 }
 
+// Returns className + style for the staggered slide-in effect.
+// Usage: <div {...reveal(3)}>...</div> — i is the position in the
+// reveal sequence for that page; every tab remounts on switch, so the
+// animation replays each time the user navigates to it.
+function reveal(i, extraClass) {
+  return {
+    className: extraClass ? `reveal ${extraClass}` : "reveal",
+    style: { "--i": i },
+  };
+}
+
+/* ---------- Nav with traveling glow indicator ---------- */
+function PillNav({ active, setActive }) {
+  const containerRef = useRef(null);
+  const btnRefs = useRef({});
+  const [indicator, setIndicator] = useState(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const btn = btnRefs.current[active];
+    if (container && btn) {
+      const cRect = container.getBoundingClientRect();
+      const bRect = btn.getBoundingClientRect();
+      setIndicator({ left: bRect.left - cRect.left, width: bRect.width });
+    }
+  }, [active]);
+
+  return (
+    <div className="pill-nav" ref={containerRef}>
+      {indicator && (
+        <span
+          className="pill-glow"
+          style={{ transform: `translateX(${indicator.left}px)`, width: `${indicator.width}px` }}
+        />
+      )}
+      {TABS.map((t) => (
+        <button
+          key={t.id}
+          ref={(el) => (btnRefs.current[t.id] = el)}
+          className={`pill-link ${active === t.id ? "active" : ""}`}
+          onClick={() => setActive(t.id)}
+        >
+          {t.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 /* ---------- Shared hero + nav, used on every tab ---------- */
 function Hero({ active, setActive, tall, eyebrow, title, subtitle, primaryCta, secondaryCta }) {
   return (
@@ -98,28 +147,18 @@ function Hero({ active, setActive, tall, eyebrow, title, subtitle, primaryCta, s
         <button className="brand" onClick={() => setActive("overview")}>
           Vallibel One
         </button>
-        <div className="pill-nav">
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              className={`pill-link ${active === t.id ? "active" : ""}`}
-              onClick={() => setActive(t.id)}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
+        <PillNav active={active} setActive={setActive} />
         <button className="btn-black" onClick={() => setActive("register")}>
           Register <span className="btn-arrow">→</span>
         </button>
       </nav>
 
       <div className="hero-body">
-        {eyebrow && <p className="hero-eyebrow">{eyebrow}</p>}
-        <h1>{title}</h1>
-        {subtitle && <p className="hero-subtitle">{subtitle}</p>}
+        {eyebrow && <p {...reveal(0)}>{eyebrow}</p>}
+        <h1 {...reveal(eyebrow ? 1 : 0)}>{title}</h1>
+        {subtitle && <p {...reveal(eyebrow ? 2 : 1, "hero-subtitle")}>{subtitle}</p>}
         {(primaryCta || secondaryCta) && (
-          <div className="hero-ctas">
+          <div {...reveal(eyebrow ? 3 : 2, "hero-ctas")}>
             {primaryCta}
             {secondaryCta}
           </div>
@@ -152,7 +191,7 @@ function OverviewTab({ active, setActive }) {
       />
 
       <div className="page">
-        <div className="stat-row">
+        <div {...reveal(3, "stat-row")}>
           <div className="stat">
             <span className="stat-num">8</span>
             <span className="stat-label">Business units</span>
@@ -168,7 +207,7 @@ function OverviewTab({ active, setActive }) {
         </div>
 
         <div className="grid-2">
-          <div className="card">
+          <div {...reveal(4, "card")}>
             <h3>Phase 1 — Business unit visits</h3>
             <p>
               Guided visits across eight Vallibel One business units, giving participants
@@ -176,7 +215,7 @@ function OverviewTab({ active, setActive }) {
             </p>
             <Tag>Tentative: first two weeks of Sept 2026</Tag>
           </div>
-          <div className="card">
+          <div {...reveal(5, "card")}>
             <h3>Phase 2 — Knowledge sharing session</h3>
             <p>
               A structured session covering industry operations, technology, sustainability
@@ -186,20 +225,20 @@ function OverviewTab({ active, setActive }) {
           </div>
         </div>
 
-        <h3 className="section-label">Participating business units</h3>
+        <h3 {...reveal(6, "section-label")}>Participating business units</h3>
         <ul className="unit-list">
-          {BUSINESS_UNITS.map((u) => (
-            <li key={u}>{u}</li>
+          {BUSINESS_UNITS.map((u, i) => (
+            <li key={u} {...reveal(7 + i)}>{u}</li>
           ))}
         </ul>
 
-        <h3 className="section-label">Who this is for</h3>
+        <h3 {...reveal(16, "section-label")}>Who this is for</h3>
         <div className="grid-2">
-          <div className="card quiet">
+          <div {...reveal(17, "card quiet")}>
             <h4>School leavers</h4>
             <p>Completed A/L examinations, Mathematics or Commerce streams. Focus: career and study pathway guidance.</p>
           </div>
-          <div className="card quiet">
+          <div {...reveal(18, "card quiet")}>
             <h4>University students</h4>
             <p>From KDU, CINEC, IIT or NIBM. Focus: applied exposure to logistics, supply chain, engineering and operations.</p>
           </div>
@@ -291,14 +330,14 @@ function RegisterTab({ active, setActive }) {
           </div>
         ) : (
           <div className="reg-sheet">
-            <div className="reg-header-row">
+            <div {...reveal(2, "reg-header-row")}>
               <div className="reg-banner">
                 <h2>REGISTRATION <span>FORM</span></h2>
               </div>
               <div className="reg-wordmark">Vallibel One</div>
             </div>
 
-            <div className="reg-meta-row">
+            <div {...reveal(3, "reg-meta-row")}>
               <div className="reg-meta">
                 <span className="reg-meta-label">Date</span>
                 <span className="reg-meta-value">{today}</span>
@@ -310,8 +349,8 @@ function RegisterTab({ active, setActive }) {
             </div>
 
             <form onSubmit={handleSubmit}>
-              <div className="reg-section-title">Category</div>
-              <div className="reg-check-row">
+              <div {...reveal(4, "reg-section-title")}>Category</div>
+              <div {...reveal(4, "reg-check-row")}>
                 <label className="reg-check">
                   <input
                     type="checkbox"
@@ -330,8 +369,8 @@ function RegisterTab({ active, setActive }) {
                 </label>
               </div>
 
-              <div className="reg-section-title">Personal Information</div>
-              <div className="reg-grid">
+              <div {...reveal(5, "reg-section-title")}>Personal Information</div>
+              <div {...reveal(5, "reg-grid")}>
                 <div className="reg-field">
                   <label>Full Name *</label>
                   <input value={form.fullName} onChange={(e) => update("fullName", e.target.value)} placeholder="As per NIC" />
@@ -385,8 +424,8 @@ function RegisterTab({ active, setActive }) {
                 )}
               </div>
 
-              <div className="reg-section-title">Emergency Contact</div>
-              <div className="reg-grid">
+              <div {...reveal(6, "reg-section-title")}>Emergency Contact</div>
+              <div {...reveal(6, "reg-grid")}>
                 <div className="reg-field">
                   <label>Contact Name</label>
                   <input value={form.emergencyName} onChange={(e) => update("emergencyName", e.target.value)} />
@@ -397,8 +436,8 @@ function RegisterTab({ active, setActive }) {
                 </div>
               </div>
 
-              <div className="reg-section-title">Consent</div>
-              <div className="reg-consent">
+              <div {...reveal(7, "reg-section-title")}>Consent</div>
+              <div {...reveal(7, "reg-consent")}>
                 <label className="reg-check">
                   <input type="checkbox" checked={form.consentParticipation} onChange={(e) => update("consentParticipation", e.target.checked)} />
                   I consent to participate and agree to follow site safety and conduct guidelines. *
@@ -417,7 +456,7 @@ function RegisterTab({ active, setActive }) {
 
               {error && <p className="error-text">{error}</p>}
 
-              <button type="submit" className="btn-primary" disabled={submitting}>
+              <button type="submit" {...reveal(8, "btn-primary")} disabled={submitting}>
                 {submitting ? "Submitting…" : "Submit registration"}
               </button>
             </form>
@@ -440,11 +479,11 @@ function ScheduleTab({ active, setActive }) {
       />
 
       <div className="page">
-        <p className="lede">
+        <p {...reveal(2, "lede")}>
           <Tag>All dates below are placeholder values</Tag> — final visit sequence is still under discussion with each business unit.
         </p>
 
-        <h3 className="section-label">Phase 1 — Business unit visits</h3>
+        <h3 {...reveal(3, "section-label")}>Phase 1 — Business unit visits</h3>
         <table className="schedule-table">
           <thead>
             <tr>
@@ -454,8 +493,8 @@ function ScheduleTab({ active, setActive }) {
             </tr>
           </thead>
           <tbody>
-            {SCHEDULE.map((row) => (
-              <tr key={row.unit}>
+            {SCHEDULE.map((row, i) => (
+              <tr key={row.unit} {...reveal(4 + i)}>
                 <td>{row.date}</td>
                 <td>{row.unit}</td>
                 <td>{row.slot}</td>
@@ -464,21 +503,21 @@ function ScheduleTab({ active, setActive }) {
           </tbody>
         </table>
 
-        <h3 className="section-label">Phase 2 — Knowledge sharing session</h3>
-        <div className="card quiet">
+        <h3 {...reveal(13, "section-label")}>Phase 2 — Knowledge sharing session</h3>
+        <div {...reveal(14, "card quiet")}>
           <p><strong>Date:</strong> {PHASE2.date}</p>
           <p><strong>Time:</strong> {PHASE2.time}</p>
           <p><strong>Venue:</strong> {PHASE2.venue}</p>
         </div>
 
-        <h3 className="section-label">Visit day flow</h3>
+        <h3 {...reveal(15, "section-label")}>Visit day flow</h3>
         <ol className="flow-list">
-          <li>Registration, welcome and safety briefing</li>
-          <li>Introduction to Vallibel One PLC and the host business unit</li>
-          <li>Guided operational tour through approved areas</li>
-          <li>Focused explanation based on participant category</li>
-          <li>Question-and-answer session with host representatives</li>
-          <li>Feedback collection and closing remarks</li>
+          <li {...reveal(16)}>Registration, welcome and safety briefing</li>
+          <li {...reveal(17)}>Introduction to Vallibel One PLC and the host business unit</li>
+          <li {...reveal(18)}>Guided operational tour through approved areas</li>
+          <li {...reveal(19)}>Focused explanation based on participant category</li>
+          <li {...reveal(20)}>Question-and-answer session with host representatives</li>
+          <li {...reveal(21)}>Feedback collection and closing remarks</li>
         </ol>
       </div>
     </div>
@@ -498,7 +537,7 @@ function SafetyTab({ active, setActive }) {
 
       <div className="page">
         <div className="grid-2">
-          <div className="card">
+          <div {...reveal(2, "card")}>
             <h4>What to wear</h4>
             <ul>
               <li>Closed-toe covered shoes — no sandals or slippers</li>
@@ -506,7 +545,7 @@ function SafetyTab({ active, setActive }) {
               <li>Avoid loose jewellery, scarves or accessories near machinery</li>
             </ul>
           </div>
-          <div className="card">
+          <div {...reveal(3, "card")}>
             <h4>What to bring</h4>
             <ul>
               <li>Valid NIC or student ID</li>
@@ -516,16 +555,16 @@ function SafetyTab({ active, setActive }) {
           </div>
         </div>
 
-        <h3 className="section-label">On-site conduct</h3>
+        <h3 {...reveal(4, "section-label")}>On-site conduct</h3>
         <ul className="unit-list">
-          <li>Stay with your assigned group and guide at all times</li>
-          <li>Do not enter unsupervised or restricted areas</li>
-          <li>Follow all instructions from host business unit representatives</li>
-          <li>Photography only where explicitly permitted by your host</li>
-          <li>No confidential, operational or commercially sensitive information will be shared or should be requested</li>
+          <li {...reveal(5)}>Stay with your assigned group and guide at all times</li>
+          <li {...reveal(6)}>Do not enter unsupervised or restricted areas</li>
+          <li {...reveal(7)}>Follow all instructions from host business unit representatives</li>
+          <li {...reveal(8)}>Photography only where explicitly permitted by your host</li>
+          <li {...reveal(9)}>No confidential, operational or commercially sensitive information will be shared or should be requested</li>
         </ul>
 
-        <div className="card quiet">
+        <div {...reveal(10, "card quiet")}>
           <p>
             <strong>Note:</strong> unsupervised access to production areas, machinery, warehouses
             or restricted locations is not permitted under any circumstances.
@@ -550,7 +589,7 @@ function FaqTab({ active, setActive }) {
       <div className="page page-narrow">
         <div className="faq-list">
           {FAQS.map((item, i) => (
-            <div className={`faq-item ${open === i ? "open" : ""}`} key={item.q}>
+            <div className={`faq-item reveal ${open === i ? "open" : ""}`} style={{ "--i": 2 + i }} key={item.q}>
               <button className="faq-q" onClick={() => setOpen(open === i ? null : i)}>
                 {item.q}
                 <span className="faq-icon">{open === i ? "−" : "+"}</span>
@@ -589,6 +628,21 @@ function App() {
         }
         h1, h2, h3, h4 { font-family: 'Inter', sans-serif; }
 
+        /* ---------- Staggered slide-in for page content ---------- */
+        /* Every tab is a fresh component instance on switch (see TAB_RENDERERS),
+           so these animations replay automatically each time the user navigates. */
+        @keyframes revealUp {
+          from { opacity: 0; transform: translateY(26px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .reveal {
+          animation: revealUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+          animation-delay: calc(var(--i, 0) * 65ms);
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .reveal { animation: none; }
+        }
+
         /* ---------- Hero + nav (every tab) ---------- */
         .hero {
           position: relative;
@@ -624,6 +678,7 @@ function App() {
           padding: 0;
         }
         .pill-nav {
+          position: relative;
           display: flex;
           gap: 2px;
           background: rgba(255,255,255,0.10);
@@ -632,7 +687,26 @@ function App() {
           padding: 4px;
           backdrop-filter: blur(6px);
         }
+        .pill-glow {
+          position: absolute;
+          top: 4px;
+          bottom: 4px;
+          left: 0;
+          border-radius: 999px;
+          background: rgba(255,255,255,0.16);
+          box-shadow:
+            0 0 0 1px rgba(255,255,255,0.4),
+            0 0 14px 2px rgba(255,255,255,0.45),
+            0 0 26px 8px rgba(225,103,31,0.5);
+          transition:
+            transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+            width 0.62s cubic-bezier(0.34, 1.56, 0.64, 1);
+          pointer-events: none;
+          z-index: 0;
+        }
         .pill-link {
+          position: relative;
+          z-index: 1;
           background: transparent;
           border: none;
           color: rgba(245,238,228,0.82);
@@ -642,10 +716,10 @@ function App() {
           padding: 8px 16px;
           border-radius: 999px;
           cursor: pointer;
-          transition: background 0.15s ease, color 0.15s ease;
+          transition: color 0.15s ease;
         }
         .pill-link:hover { color: #F5EEE4; }
-        .pill-link.active { background: rgba(255,255,255,0.18); color: #F5EEE4; }
+        .pill-link.active { color: #F5EEE4; }
         .btn-black {
           background: #0E0B09;
           color: #F5EEE4;
