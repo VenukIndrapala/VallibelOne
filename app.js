@@ -40,7 +40,7 @@ const SCHEDULE = [
 ];
 
 const PHASE2 = {
-  date: "Sat, 19 Sep 2026 (dummy — pending confirmation)",
+  date: "Sat, 19 Sep 2026 (dummy, pending confirmation)",
   time: "9:00 AM – 1:00 PM",
   venue: "KDU Faculty of Graduate Studies Auditorium (subject to confirmation)",
 };
@@ -52,11 +52,11 @@ const FAQS = [
   },
   {
     q: "Is there a registration fee?",
-    a: "No. Participation is free. Transport, meals and other costs are only covered if separately approved — check the Schedule tab for confirmed logistics closer to the date.",
+    a: "No. Participation is free. Transport, meals and other costs are only covered if separately approved. Check the Schedule tab for confirmed logistics closer to the date.",
   },
   {
     q: "Will I receive a certificate?",
-    a: "Certification is currently outside the scope of this programme. This may be revisited — check back before assuming a certificate will be issued.",
+    a: "Certification is currently outside the scope of this programme. This may be revisited. Check back before assuming a certificate will be issued.",
   },
   {
     q: "What should I bring on the day?",
@@ -380,7 +380,7 @@ function OverviewTab({ active, setActive }) {
         setActive={setActive}
         tall
         title={<>Step into industry.<br />Build your future.</>}
-        subtitle="A guided programme across eight Vallibel One business units, closing with a knowledge sharing session — built for school leavers and university students exploring supply chain, engineering and operations."
+        subtitle="A guided programme across eight Vallibel One business units, closing with a knowledge sharing session, built for school leavers and university students exploring supply chain, engineering and operations."
         primaryCta={
           <button
             data-mag
@@ -425,7 +425,7 @@ function OverviewTab({ active, setActive }) {
 
         <div className="grid-2">
           <div {...reveal(4, "card")}>
-            <h3>Phase 1 — Business unit visits</h3>
+            <h3>Phase 1: Business unit visits</h3>
             <p>
               Guided visits across eight Vallibel One business units, giving participants
               direct exposure to production, logistics, engineering and operational practice.
@@ -433,7 +433,7 @@ function OverviewTab({ active, setActive }) {
             <Tag>Tentative: first two weeks of Sept 2026</Tag>
           </div>
           <div {...reveal(5, "card")}>
-            <h3>Phase 2 — Knowledge sharing session</h3>
+            <h3>Phase 2: Knowledge sharing session</h3>
             <p>
               A structured session covering industry operations, technology, sustainability
               and career pathways, led by Vallibel One managers and subject-matter experts.
@@ -692,7 +692,7 @@ function RegisterTab({ active, setActive }) {
               </div>
             </div>
 
-            <div className="signup-footer">© 2026 Vallibel One PLC — Supply Chain &amp; Business Excellence Department</div>
+            <div className="signup-footer">© 2026 Vallibel One PLC, Supply Chain &amp; Business Excellence Department</div>
           </div>
         )}
       </div>
@@ -713,10 +713,10 @@ function ScheduleTab({ active, setActive }) {
 
       <div className="page">
         <p {...reveal(2, "lede")}>
-          <Tag>All dates below are placeholder values</Tag> — final visit sequence is still under discussion with each business unit.
+          <Tag>All dates below are placeholder values</Tag>. Final visit sequence is still under discussion with each business unit.
         </p>
 
-        <h3 {...reveal(3, "section-label")}>Phase 1 — Business unit visits</h3>
+        <h3 {...reveal(3, "section-label")}>Phase 1: Business unit visits</h3>
         <table className="schedule-table">
           <thead>
             <tr>
@@ -736,7 +736,7 @@ function ScheduleTab({ active, setActive }) {
           </tbody>
         </table>
 
-        <h3 {...reveal(13, "section-label")}>Phase 2 — Knowledge sharing session</h3>
+        <h3 {...reveal(13, "section-label")}>Phase 2: Knowledge sharing session</h3>
         <div {...reveal(14, "card quiet")}>
           <p><strong>Date:</strong> {PHASE2.date}</p>
           <p><strong>Time:</strong> {PHASE2.time}</p>
@@ -773,7 +773,7 @@ function SafetyTab({ active, setActive }) {
           <div {...reveal(2, "card")}>
             <h4>What to wear</h4>
             <ul>
-              <li>Closed-toe covered shoes — no sandals or slippers</li>
+              <li>Closed-toe covered shoes, no sandals or slippers</li>
               <li>Full-length trousers recommended</li>
               <li>Avoid loose jewellery, scarves or accessories near machinery</li>
             </ul>
